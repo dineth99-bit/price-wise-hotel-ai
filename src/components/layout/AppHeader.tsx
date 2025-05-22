@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ReloadIcon, SettingsIcon, HelpCircleIcon, BarChart3Icon } from 'lucide-react';
+import { RefreshCw, SettingsIcon, HelpCircleIcon, BarChart3Icon } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AppHeader: React.FC = () => {
@@ -23,7 +23,7 @@ const AppHeader: React.FC = () => {
           className="text-sm" 
           onClick={refreshData}
         >
-          <ReloadIcon className="mr-2 h-4 w-4" />
+          <RefreshCw className="mr-2 h-4 w-4" />
           Refresh Data
         </Button>
         
