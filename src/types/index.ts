@@ -56,6 +56,7 @@ export interface RoomType {
   basePrice: number;
   capacity: number;
   inventory: number;
+  description?: string; // Added this property
 }
 
 // Customer Segments
@@ -64,4 +65,7 @@ export interface CustomerSegment {
   name: string;
   priceMultiplier: number;
   description: string;
+  priceSensitivity?: string; // Added this property
+  averageBookingValue?: number; // Added this property
+  specialConditions?: string[]; // Added this property
 }
