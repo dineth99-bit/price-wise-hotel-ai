@@ -1,6 +1,13 @@
-
 // Agent Types
 export type AgentType = 'demand' | 'elasticity' | 'ltb' | 'trend' | 'event' | 'weather' | 'cost';
+
+export interface SubFactor {
+  id: string;
+  name: string;
+  description: string;
+  enabled: boolean;
+  impact: number; // Percentage impact on the main agent forecast
+}
 
 export interface Agent {
   id: AgentType;
@@ -8,6 +15,7 @@ export interface Agent {
   description: string;
   color: string;
   enabled: boolean;
+  subFactors: SubFactor[];
 }
 
 export interface AgentForecast {

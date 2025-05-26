@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,6 +44,20 @@ const Index: React.FC = () => {
   const handleToggleAgent = (agentId: string, enabled: boolean) => {
     setAgents(agents.map(agent => 
       agent.id === agentId ? { ...agent, enabled } : agent
+    ));
+  };
+  
+  // Handler for toggling sub-factors
+  const handleToggleSubFactor = (agentId: string, subFactorId: string, enabled: boolean) => {
+    setAgents(agents.map(agent => 
+      agent.id === agentId 
+        ? {
+            ...agent,
+            subFactors: agent.subFactors.map(subFactor =>
+              subFactor.id === subFactorId ? { ...subFactor, enabled } : subFactor
+            )
+          }
+        : agent
     ));
   };
   
@@ -206,13 +219,14 @@ const Index: React.FC = () => {
               <CardHeader>
                 <CardTitle>Forecasting Agents Configuration</CardTitle>
                 <CardDescription>
-                  Enable or disable agents to adjust the optimization model
+                  Enable or disable agents and their sub-factors to adjust the optimization model
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <AgentsConfiguration 
                   agents={agents}
                   onToggleAgent={handleToggleAgent}
+                  onToggleSubFactor={handleToggleSubFactor}
                 />
               </CardContent>
             </Card>
