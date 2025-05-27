@@ -5,9 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { CirclePlusIcon, DatabaseIcon, FileTextIcon, LinkIcon, MoreHorizontalIcon, RefreshCwIcon } from 'lucide-react';
+import { CirclePlusIcon, DatabaseIcon, FileTextIcon, LinkIcon, MoreHorizontalIcon, RefreshCwIcon, ServerIcon } from 'lucide-react';
 
-// Mock data for data sources
+// Mock data for data sources including MCP servers
 const mockDataSources = [
   {
     id: 'pms-data',
@@ -34,6 +34,18 @@ const mockDataSources = [
     }
   },
   {
+    id: 'mcp-pricing-server',
+    name: 'MCP Pricing Intelligence Server',
+    type: 'mcp',
+    status: 'connected',
+    lastSync: '2025-05-21T13:20:00Z',
+    metrics: {
+      dataPoints: 2156,
+      completeness: 92,
+      dataFreshness: 2, // hours
+    }
+  },
+  {
     id: 'weather-api',
     name: 'Weather API',
     type: 'api',
@@ -43,6 +55,18 @@ const mockDataSources = [
       dataPoints: 1459,
       completeness: 100,
       dataFreshness: 6, // hours
+    }
+  },
+  {
+    id: 'mcp-market-server',
+    name: 'MCP Market Analytics Server',
+    type: 'mcp',
+    status: 'warning',
+    lastSync: '2025-05-21T08:30:00Z',
+    metrics: {
+      dataPoints: 1893,
+      completeness: 87,
+      dataFreshness: 8, // hours
     }
   },
   {
@@ -58,6 +82,18 @@ const mockDataSources = [
     }
   },
   {
+    id: 'mcp-demand-server',
+    name: 'MCP Demand Forecasting Server',
+    type: 'mcp',
+    status: 'connected',
+    lastSync: '2025-05-21T11:45:00Z',
+    metrics: {
+      dataPoints: 3421,
+      completeness: 96,
+      dataFreshness: 3, // hours
+    }
+  },
+  {
     id: 'events-calendar',
     name: 'Local Events Calendar',
     type: 'file',
@@ -68,7 +104,7 @@ const mockDataSources = [
       completeness: 45,
       dataFreshness: 72, // hours
     }
-  },
+  }
 ];
 
 const DataSources: React.FC = () => {
@@ -101,7 +137,15 @@ const DataSources: React.FC = () => {
       case 'api': return <LinkIcon className="h-4 w-4" />;
       case 'file': return <FileTextIcon className="h-4 w-4" />;
       case 'scraper': return <DatabaseIcon className="h-4 w-4" />;
+      case 'mcp': return <ServerIcon className="h-4 w-4" />;
       default: return <DatabaseIcon className="h-4 w-4" />;
+    }
+  };
+
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'mcp': return 'MCP Server';
+      default: return `${type.charAt(0).toUpperCase() + type.slice(1)} Connection`;
     }
   };
 
@@ -112,7 +156,7 @@ const DataSources: React.FC = () => {
           <div>
             <h1 className="text-2xl font-bold tracking-tight mb-2">Data Sources</h1>
             <p className="text-muted-foreground">
-              Manage connections to external data providers and APIs
+              Manage connections to external data providers, APIs, and MCP servers
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -168,8 +212,8 @@ const DataSources: React.FC = () => {
                     </div>
                     <CardDescription className="flex items-center gap-1 mt-1">
                       {getTypeIcon(source.type)}
-                      <span className="capitalize">
-                        {source.type} Connection
+                      <span>
+                        {getTypeLabel(source.type)}
                       </span>
                       <span className="mx-1">•</span>
                       <span>Last synced: {new Date(source.lastSync).toLocaleString()}</span>

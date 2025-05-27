@@ -2,11 +2,11 @@
 import { Agent } from '../types';
 import { agentSubFactors } from './agentSubFactors';
 
-// Define agents
+// Define agents with "Intelligent" naming
 export const agents: Agent[] = [
   {
     id: 'demand',
-    name: 'Demand Agent',
+    name: 'Demand Intelligent Agent',
     description: 'Predicts future room demand based on historical bookings, seasonality, and events',
     color: '#3b82f6', // blue
     enabled: true,
@@ -14,7 +14,7 @@ export const agents: Agent[] = [
   },
   {
     id: 'elasticity',
-    name: 'Elasticity Agent',
+    name: 'Elasticity Intelligent Agent',
     description: 'Estimates price elasticity across room types and customer segments',
     color: '#10b981', // green
     enabled: true,
@@ -22,7 +22,7 @@ export const agents: Agent[] = [
   },
   {
     id: 'ltb',
-    name: 'Look-to-Book Agent',
+    name: 'Look-to-Book Intelligent Agent',
     description: 'Predicts conversion rate based on traffic and booking trends',
     color: '#8b5cf6', // purple
     enabled: true,
@@ -30,7 +30,7 @@ export const agents: Agent[] = [
   },
   {
     id: 'trend',
-    name: 'Price Trend Agent',
+    name: 'Price Trend Intelligent Agent',
     description: 'Projects future average prices using time-series analysis',
     color: '#ef4444', // red
     enabled: true,
@@ -38,7 +38,7 @@ export const agents: Agent[] = [
   },
   {
     id: 'event',
-    name: 'Event Impact Agent',
+    name: 'Event Impact Intelligent Agent',
     description: 'Quantifies the impact of nearby events on demand',
     color: '#f97316', // orange
     enabled: true,
@@ -46,7 +46,7 @@ export const agents: Agent[] = [
   },
   {
     id: 'weather',
-    name: 'Weather Impact Agent',
+    name: 'Weather Impact Intelligent Agent',
     description: 'Estimates the influence of weather conditions on room occupancy',
     color: '#06b6d4', // cyan
     enabled: true,
@@ -54,7 +54,7 @@ export const agents: Agent[] = [
   },
   {
     id: 'cost',
-    name: 'Cost Agent',
+    name: 'Cost Intelligent Agent',
     description: 'Forecasts operational costs to maintain profitability',
     color: '#64748b', // slate
     enabled: true,
