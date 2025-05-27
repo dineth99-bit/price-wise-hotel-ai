@@ -67,13 +67,8 @@ export { generateAgentForecasts } from './agentForecasts';
 export { roomTypes, customerSegments } from './roomData';
 export { generateForecastData, generatePriceRecommendations } from './priceRecommendations';
 
-// Pre-generate data for immediate use
-export const forecastData = (() => {
-  const { generateForecastData } = require('./priceRecommendations');
-  return generateForecastData();
-})();
+// Pre-generate data for immediate use using proper ES6 imports
+import { generateForecastData, generatePriceRecommendations } from './priceRecommendations';
 
-export const priceRecommendations = (() => {
-  const { generatePriceRecommendations } = require('./priceRecommendations');
-  return generatePriceRecommendations();
-})();
+export const forecastData = generateForecastData();
+export const priceRecommendations = generatePriceRecommendations();
