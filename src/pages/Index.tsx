@@ -37,7 +37,8 @@ const Index: React.FC = () => {
     max_price: 500,
     min_profit_margin: 15,
     max_price_change: 10,
-    occupancy_target: 80
+    occupancy_target: 80,
+    algorithm: 'gradient-descent'
   };
 
   // Handler for toggling agents

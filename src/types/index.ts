@@ -55,6 +55,7 @@ export interface OptimizationConstraints {
   min_profit_margin: number;
   max_price_change: number; // Maximum allowed price change in percentage
   occupancy_target: number; // Target occupancy percentage
+  algorithm?: string;
 }
 
 // Room Types

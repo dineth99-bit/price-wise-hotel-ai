@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { OptimizationConstraints } from '@/types';
 
@@ -13,8 +13,20 @@ interface OptimizationPanelProps {
   initialConstraints: OptimizationConstraints;
 }
 
+const algorithms = [
+  { id: 'gradient-descent', name: 'Gradient Descent', description: 'Fast convergence for smooth optimization landscapes' },
+  { id: 'genetic-algorithm', name: 'Genetic Algorithm', description: 'Global optimization with evolutionary approach' },
+  { id: 'simulated-annealing', name: 'Simulated Annealing', description: 'Escapes local minima through probabilistic jumps' },
+  { id: 'particle-swarm', name: 'Particle Swarm', description: 'Swarm intelligence for multi-dimensional optimization' },
+  { id: 'bayesian-optimization', name: 'Bayesian Optimization', description: 'Sample-efficient optimization with uncertainty quantification' },
+  { id: 'reinforcement-learning', name: 'Reinforcement Learning', description: 'Adaptive learning through environment interaction' }
+];
+
 const OptimizationPanel: React.FC<OptimizationPanelProps> = ({ onApplyConstraints, initialConstraints }) => {
-  const [constraints, setConstraints] = useState<OptimizationConstraints>(initialConstraints);
+  const [constraints, setConstraints] = useState<OptimizationConstraints>({
+    ...initialConstraints,
+    algorithm: initialConstraints.algorithm || 'gradient-descent'
+  });
 
   const handleMinPriceChange = (value: number) => {
     setConstraints(prev => ({ ...prev, min_price: value }));
@@ -36,22 +48,45 @@ const OptimizationPanel: React.FC<OptimizationPanelProps> = ({ onApplyConstraint
     setConstraints(prev => ({ ...prev, occupancy_target: value[0] }));
   };
 
+  const handleAlgorithmChange = (algorithm: string) => {
+    setConstraints(prev => ({ ...prev, algorithm }));
+  };
+
   const applyConstraints = () => {
     onApplyConstraints(constraints);
-    toast.success("Optimization constraints applied successfully");
+    toast.success(`Price optimization applied with ${algorithms.find(a => a.id === constraints.algorithm)?.name} algorithm`);
   };
 
   const resetConstraints = () => {
-    setConstraints(initialConstraints);
-    toast.info("Optimization constraints reset to defaults");
+    setConstraints({ ...initialConstraints, algorithm: 'gradient-descent' });
+    toast.info("Price optimization constraints reset to defaults");
   };
 
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-lg">Optimization Constraints</CardTitle>
+        <CardTitle className="text-lg">Price Optimization Constraints</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="algorithm">Optimization Algorithm</Label>
+          <Select value={constraints.algorithm} onValueChange={handleAlgorithmChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select algorithm" />
+            </SelectTrigger>
+            <SelectContent>
+              {algorithms.map(algorithm => (
+                <SelectItem key={algorithm.id} value={algorithm.id}>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{algorithm.name}</span>
+                    <span className="text-xs text-muted-foreground">{algorithm.description}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="min-price">Minimum Price ($)</Label>
@@ -121,7 +156,7 @@ const OptimizationPanel: React.FC<OptimizationPanelProps> = ({ onApplyConstraint
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline" onClick={resetConstraints}>Reset</Button>
-        <Button onClick={applyConstraints}>Apply Constraints</Button>
+        <Button onClick={applyConstraints}>Apply Optimization</Button>
       </CardFooter>
     </Card>
   );
