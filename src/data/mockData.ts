@@ -78,113 +78,139 @@ const generateDates = (days: number) => {
 
 const dates = generateDates(30);
 
-// Generate agent forecasts
+// Create a consistent set of market conditions for logical data generation
+const marketConditions = dates.map((date, index) => {
+  const day = new Date(date).getDay();
+  const isWeekend = day === 0 || day === 6;
+  const isHoliday = Math.random() < 0.05; // 5% chance of holiday
+  const hasEvent = Math.random() < 0.15; // 15% chance of event
+  const seasonalFactor = Math.sin((index / 30) * Math.PI * 2) * 0.3 + 1; // Seasonal cycle
+  const trendFactor = 1 + (index * 0.002); // Slight upward trend
+  
+  return {
+    date,
+    index,
+    isWeekend,
+    isHoliday,
+    hasEvent,
+    seasonalFactor,
+    trendFactor,
+    baseWeatherScore: Math.sin(index / 7 * Math.PI) * 15, // Weekly weather pattern
+    economicSentiment: 0.8 + Math.sin(index / 15 * Math.PI) * 0.2 // Economic cycle
+  };
+});
+
+// Generate agent forecasts with logical consistency
 export const generateAgentForecasts = (agentId: string): AgentForecast[] => {
   const forecasts: AgentForecast[] = [];
   
-  // Base values and trends for each agent
-  const baseValues: Record<string, number> = {
-    demand: 80,
-    elasticity: -1.5,
-    ltb: 0.12,
-    trend: 100,
-    event: 0,
-    weather: 0,
-    cost: 40
-  };
-  
-  // Day-to-day variation for each agent
-  const variations: Record<string, number> = {
-    demand: 10,
-    elasticity: 0.2,
-    ltb: 0.02,
-    trend: 5,
-    event: 5,
-    weather: 3,
-    cost: 2
-  };
-  
-  // Weekly patterns (weekend effect)
-  const weekendEffects: Record<string, number> = {
-    demand: 15,
-    elasticity: -0.3,
-    ltb: 0.05,
-    trend: 20,
-    event: 10,
-    weather: 0,
-    cost: 5
-  };
-  
-  dates.forEach((date, index) => {
-    const day = new Date(date).getDay();
-    const isWeekend = day === 0 || day === 6;
+  marketConditions.forEach((condition) => {
+    let value: number;
+    let confidenceRange: number;
     
-    // Base value with some randomness
-    let value = baseValues[agentId] + (Math.random() - 0.5) * variations[agentId];
-    
-    // Add weekend effect
-    if (isWeekend) {
-      value += weekendEffects[agentId];
+    switch (agentId) {
+      case 'demand':
+        // Base demand: 60-100, higher on weekends/holidays/events
+        value = 70 * condition.seasonalFactor * condition.trendFactor;
+        if (condition.isWeekend) value *= 1.25;
+        if (condition.isHoliday) value *= 1.4;
+        if (condition.hasEvent) value *= 1.3;
+        value = Math.min(100, Math.max(40, value + (Math.random() - 0.5) * 8));
+        confidenceRange = 8;
+        break;
+        
+      case 'elasticity':
+        // Price elasticity: -0.8 to -2.5 (more negative = more elastic)
+        value = -1.5;
+        if (condition.isWeekend) value *= 0.7; // Less elastic on weekends
+        if (condition.hasEvent) value *= 0.6; // Less elastic during events
+        value *= condition.economicSentiment; // Economic conditions affect elasticity
+        value = Math.max(-3, Math.min(-0.5, value + (Math.random() - 0.5) * 0.3));
+        confidenceRange = 0.4;
+        break;
+        
+      case 'ltb':
+        // Look-to-book ratio: 0.05 to 0.20
+        value = 0.12 * condition.economicSentiment;
+        if (condition.isWeekend) value *= 1.3; // Higher conversion on weekends
+        if (condition.hasEvent) value *= 1.4; // Higher conversion during events
+        value = Math.max(0.05, Math.min(0.25, value + (Math.random() - 0.5) * 0.03));
+        confidenceRange = 0.02;
+        break;
+        
+      case 'trend':
+        // Price trend: $80-$150
+        value = 100 * condition.seasonalFactor * condition.trendFactor;
+        if (condition.isWeekend) value *= 1.2;
+        if (condition.hasEvent) value *= 1.25;
+        value = Math.max(80, Math.min(150, value + (Math.random() - 0.5) * 10));
+        confidenceRange = 12;
+        break;
+        
+      case 'event':
+        // Event boost: 0-30% (only when there's an event)
+        value = condition.hasEvent ? 15 + Math.random() * 20 : Math.random() * 3;
+        if (condition.isHoliday) value += 10;
+        confidenceRange = condition.hasEvent ? 8 : 2;
+        break;
+        
+      case 'weather':
+        // Weather impact: -15 to +15
+        value = condition.baseWeatherScore;
+        // Extreme weather reduces bookings
+        if (Math.abs(value) > 12) value *= 1.5;
+        value = Math.max(-20, Math.min(20, value + (Math.random() - 0.5) * 6));
+        confidenceRange = 5;
+        break;
+        
+      case 'cost':
+        // Operational cost: $30-$60 per room
+        value = 40 * condition.trendFactor; // Costs trend upward
+        if (condition.isWeekend) value *= 1.1; // Higher weekend costs
+        value = Math.max(30, Math.min(60, value + (Math.random() - 0.5) * 4));
+        confidenceRange = 6;
+        break;
+        
+      default:
+        value = 50;
+        confidenceRange = 10;
     }
     
-    // Add special events (random spikes)
-    if (Math.random() > 0.9 && agentId === 'event') {
-      value += Math.random() * 20;
-    }
-    
-    // Add trend over time (slight increase)
-    value += index * (variations[agentId] / 10);
-    
-    // Generate confidence interval
-    const confidenceRange = variations[agentId] * 0.8;
+    // Calculate confidence interval
     const lowerBound = value - confidenceRange / 2;
     const upperBound = value + confidenceRange / 2;
     
     forecasts.push({
-      timestamp: date,
-      value,
-      confidence: [lowerBound, upperBound]
+      timestamp: condition.date,
+      value: parseFloat(value.toFixed(2)),
+      confidence: [parseFloat(lowerBound.toFixed(2)), parseFloat(upperBound.toFixed(2))]
     });
   });
   
   return forecasts;
 };
 
-// Generate combined forecast data
+// Generate combined forecast data using the same market conditions
 export const generateForecastData = (): ForecastData[] => {
-  return dates.map((date, index) => {
-    const day = new Date(date).getDay();
-    const isWeekend = day === 0 || day === 6;
-    
-    // Base data with weekly patterns
-    let demand = 80 + (isWeekend ? 15 : 0) + (Math.random() - 0.5) * 10;
-    let elasticity = -1.5 + (isWeekend ? -0.3 : 0) + (Math.random() - 0.5) * 0.2;
-    let ltb = 0.12 + (isWeekend ? 0.05 : 0) + (Math.random() - 0.5) * 0.02;
-    let trend = 100 + (isWeekend ? 20 : 0) + (Math.random() - 0.5) * 5;
-    let cost = 40 + (isWeekend ? 5 : 0) + (Math.random() - 0.5) * 2;
-    
-    // Random events
-    let event = 0;
-    if (Math.random() > 0.85) {
-      event = Math.random() * 25;
-    }
-    
-    // Weather impact (seasonal pattern)
-    let weather = Math.sin(index / 15 * Math.PI) * 10;
-    
-    // Add trend over time
-    demand += index * 0.2;
-    trend += index * 0.5;
+  return marketConditions.map((condition) => {
+    // Use the same logic as individual agents for consistency
+    const demandForecasts = generateAgentForecasts('demand');
+    const elasticityForecasts = generateAgentForecasts('elasticity');
+    const ltbForecasts = generateAgentForecasts('ltb');
+    const trendForecasts = generateAgentForecasts('trend');
+    const eventForecasts = generateAgentForecasts('event');
+    const weatherForecasts = generateAgentForecasts('weather');
+    const costForecasts = generateAgentForecasts('cost');
     
     return {
-      timestamp: date,
-      predicted_demand: Math.round(demand),
-      price_elasticity: parseFloat(elasticity.toFixed(2)),
-      look_to_book_ratio: parseFloat(ltb.toFixed(2)),
-      trend_price: parseFloat(trend.toFixed(1)),
-      weather_impact: parseFloat(weather.toFixed(1)),
-      event_boost: parseFloat(event.toFixed(1)),
-      cost_estimate: parseFloat(cost.toFixed(1))
+      timestamp: condition.date,
+      predicted_demand: Math.round(demandForecasts[condition.index].value),
+      price_elasticity: elasticityForecasts[condition.index].value,
+      look_to_book_ratio: ltbForecasts[condition.index].value,
+      trend_price: trendForecasts[condition.index].value,
+      weather_impact: weatherForecasts[condition.index].value,
+      event_boost: eventForecasts[condition.index].value,
+      cost_estimate: costForecasts[condition.index].value
     };
   });
 };
@@ -205,60 +231,78 @@ export const customerSegments: CustomerSegment[] = [
   { id: 'package', name: 'Package Deal', priceMultiplier: 0.95, description: 'Booking as part of a travel package' }
 ];
 
-// Generate price recommendations
+// Generate price recommendations using consistent forecast data
 export const generatePriceRecommendations = (): PriceRecommendation[] => {
   const recommendations: PriceRecommendation[] = [];
+  const forecastData = generateForecastData();
   
   roomTypes.forEach(room => {
     customerSegments.forEach(segment => {
-      dates.forEach((date, index) => {
-        const day = new Date(date).getDay();
-        const isWeekend = day === 0 || day === 6;
+      forecastData.forEach((forecast, index) => {
+        const condition = marketConditions[index];
         
-        // Base price with adjustments
+        // Base price with segment adjustment
         const basePrice = room.basePrice * segment.priceMultiplier;
-        const weekendMultiplier = isWeekend ? 1.25 : 1;
-        const trendFactor = 1 + (index * 0.005); // Slight upward trend
         
-        // Current price (what was set previously)
-        const currentPrice = Math.round(basePrice * weekendMultiplier * (1 + (Math.random() - 0.5) * 0.1));
+        // Calculate current price (what was previously set)
+        let currentPrice = basePrice;
+        if (condition.isWeekend) currentPrice *= 1.15;
+        if (condition.hasEvent) currentPrice *= 1.1;
+        currentPrice = Math.round(currentPrice + (Math.random() - 0.5) * basePrice * 0.1);
         
-        // Recommended price with optimization
-        const forecastData = generateForecastData()[index];
-        const demandFactor = forecastData.predicted_demand / 80;
-        const elasticityAdjustment = -1 / forecastData.price_elasticity * 0.1;
-        const eventAdjustment = forecastData.event_boost > 0 ? (forecastData.event_boost / 100) : 0;
-        const weatherAdjustment = forecastData.weather_impact / 100;
+        // Calculate optimized recommended price using all forecast factors
+        let recommendedPrice = basePrice;
         
-        const recommendedPrice = Math.round(
-          basePrice * 
-          weekendMultiplier * 
-          trendFactor *
-          (1 + demandFactor * 0.2) * 
-          (1 + elasticityAdjustment) *
-          (1 + eventAdjustment) *
-          (1 + weatherAdjustment)
-        );
+        // Apply demand factor
+        const demandFactor = forecast.predicted_demand / 80; // Normalize around 80% demand
+        recommendedPrice *= (1 + (demandFactor - 1) * 0.3);
+        
+        // Apply elasticity factor
+        const elasticityAdjustment = Math.abs(forecast.price_elasticity) > 2 ? 0.9 : 1.1;
+        recommendedPrice *= elasticityAdjustment;
+        
+        // Apply look-to-book factor
+        const ltbAdjustment = 1 + (forecast.look_to_book_ratio - 0.12) * 2;
+        recommendedPrice *= ltbAdjustment;
+        
+        // Apply trend factor
+        recommendedPrice *= (forecast.trend_price / 100);
+        
+        // Apply event boost
+        if (forecast.event_boost > 5) {
+          recommendedPrice *= (1 + forecast.event_boost / 100);
+        }
+        
+        // Apply weather impact
+        recommendedPrice *= (1 + forecast.weather_impact / 200);
+        
+        // Ensure minimum profit margin above cost
+        const minPriceWithMargin = forecast.cost_estimate * 1.3; // 30% minimum margin
+        recommendedPrice = Math.max(recommendedPrice, minPriceWithMargin);
+        
+        recommendedPrice = Math.round(recommendedPrice);
         
         // Calculate min and max prices
-        const minPrice = Math.round(basePrice * 0.8);
-        const maxPrice = Math.round(basePrice * 1.5);
+        const minPrice = Math.round(basePrice * 0.75);
+        const maxPrice = Math.round(basePrice * 1.8);
         
         // Calculate expected metrics
-        const priceRatio = recommendedPrice / currentPrice;
-        const elasticityImpact = priceRatio ** forecastData.price_elasticity;
-        const expectedOccupancy = Math.min(0.95, forecastData.predicted_demand / 100 * elasticityImpact);
-        const expectedRevenue = recommendedPrice * expectedOccupancy * room.inventory;
+        const priceRatio = recommendedPrice / Math.max(currentPrice, 1);
+        const elasticityImpact = Math.pow(priceRatio, forecast.price_elasticity);
+        const expectedOccupancy = Math.min(95, Math.max(10, 
+          (forecast.predicted_demand / 100) * elasticityImpact * 100
+        ));
+        const expectedRevenue = recommendedPrice * (expectedOccupancy / 100) * room.inventory;
         
         recommendations.push({
-          timestamp: date,
+          timestamp: forecast.timestamp,
           room_type: room.id,
           segment: segment.id,
           recommended_price: recommendedPrice,
           min_price: minPrice,
           max_price: maxPrice,
           current_price: currentPrice,
-          expected_occupancy: parseFloat((expectedOccupancy * 100).toFixed(1)),
+          expected_occupancy: parseFloat(expectedOccupancy.toFixed(1)),
           expected_revenue: Math.round(expectedRevenue)
         });
       });

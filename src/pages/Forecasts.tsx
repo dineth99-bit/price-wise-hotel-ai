@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Calendar, Download, Filter, TrendingUp } from 'lucide-react';
 import ForecastChart from '@/components/charts/ForecastChart';
+import CombinedForecastChart from '@/components/charts/CombinedForecastChart';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { agents, generateAgentForecasts } from '@/data/mockData';
 import { AgentForecast } from '@/types';
@@ -56,22 +57,10 @@ const Forecasts: React.FC = () => {
           </div>
         </div>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Combined Forecast Analysis</CardTitle>
-            <CardDescription>Aggregated view of all active forecasting agents</CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            <div className="flex items-center justify-center h-full">
-              <div className="flex items-center gap-4">
-                <TrendingUp className="h-12 w-12 text-muted-foreground" />
-                <div className="text-center">
-                  <p className="text-muted-foreground">Select agents below to view combined forecasts</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <CombinedForecastChart 
+          agents={agents} 
+          agentForecasts={agentForecasts} 
+        />
 
         <div>
           <div className="flex justify-between items-center mb-4">
