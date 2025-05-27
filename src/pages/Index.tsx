@@ -91,7 +91,7 @@ const Index: React.FC = () => {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight mb-2">PriceOptima AI Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight mb-2">Revenue Manager Dashboard</h1>
           <p className="text-muted-foreground">
             Hotel price optimization powered by AI forecasting agents
           </p>

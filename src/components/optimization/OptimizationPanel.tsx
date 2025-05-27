@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
@@ -18,8 +19,7 @@ const algorithms = [
   { id: 'genetic-algorithm', name: 'Genetic Algorithm', description: 'Global optimization with evolutionary approach' },
   { id: 'simulated-annealing', name: 'Simulated Annealing', description: 'Escapes local minima through probabilistic jumps' },
   { id: 'particle-swarm', name: 'Particle Swarm', description: 'Swarm intelligence for multi-dimensional optimization' },
-  { id: 'bayesian-optimization', name: 'Bayesian Optimization', description: 'Sample-efficient optimization with uncertainty quantification' },
-  { id: 'reinforcement-learning', name: 'Reinforcement Learning', description: 'Adaptive learning through environment interaction' }
+  { id: 'bayesian-optimization', name: 'Bayesian Optimization', description: 'Sample-efficient optimization with uncertainty quantification' }
 ];
 
 const OptimizationPanel: React.FC<OptimizationPanelProps> = ({ onApplyConstraints, initialConstraints }) => {
