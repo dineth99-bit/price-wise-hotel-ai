@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,9 +24,10 @@ import {
   BarChart3, 
   Target, 
   TrendingUp, 
-  UserCheck
+  UserCheck,
+  DollarSign
 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Index: React.FC = () => {
@@ -82,6 +84,46 @@ const Index: React.FC = () => {
     Math.round(((todayOccupancy - yesterdayOccupancy) / yesterdayOccupancy) * 100) : 
     0;
 
+  // Calculate revenue optimization impact
+  const calculateRevenueImpact = () => {
+    const startDate = new Date(2025, 4, 15); // May 15, 2025
+    const today = new Date(2025, 4, 28); // May 28, 2025
+    
+    let totalProjectedRevenue = 0;
+    let totalActualRevenue = 0;
+    
+    // Calculate revenue for dates up to today
+    let currentDate = new Date(startDate);
+    while (currentDate <= today) {
+      const daysSinceStart = Math.floor((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      // Base revenue calculation (similar to RevenueImpactChart)
+      const baseRevenue = 45000 + Math.sin(daysSinceStart * 0.2) * 5000 + (Math.random() - 0.5) * 3000;
+      const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6;
+      const weekendMultiplier = isWeekend ? 1.25 : 1.0;
+      const projectedRevenue = Math.round(baseRevenue * weekendMultiplier);
+      
+      // Actual revenue with optimization impact (8-15% higher)
+      const optimizationLift = 0.08 + Math.random() * 0.07;
+      const actualRevenue = Math.round(projectedRevenue * (1 + optimizationLift) * (0.9 + Math.random() * 0.2));
+      
+      totalProjectedRevenue += projectedRevenue;
+      totalActualRevenue += actualRevenue;
+      
+      currentDate = addDays(currentDate, 1);
+    }
+    
+    const revenueDifference = totalActualRevenue - totalProjectedRevenue;
+    const percentageIncrease = ((revenueDifference / totalProjectedRevenue) * 100);
+    
+    return {
+      difference: revenueDifference,
+      percentage: percentageIncrease
+    };
+  };
+
+  const revenueImpact = calculateRevenueImpact();
+
   // Generate forecast data for each agent
   const agentForecasts: Record<string, AgentForecast[]> = {};
   agents.forEach(agent => {
@@ -98,7 +140,13 @@ const Index: React.FC = () => {
           </p>
         </div>
         
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
+          <StatCard 
+            title="Revenue Impact" 
+            value={`$${Math.round(revenueImpact.difference / 1000)}k`}
+            change={revenueImpact.percentage}
+            icon={<DollarSign />}
+          />
           <StatCard 
             title="Expected Occupancy" 
             value={`${todayOccupancy}%`}
