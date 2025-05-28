@@ -21,8 +21,8 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon }) => {
   const changeText = change === undefined 
     ? '' 
     : change > 0 
-      ? `+${change}%` 
-      : `${change}%`;
+      ? `+${change.toFixed(2)}%` 
+      : `${change.toFixed(2)}%`;
 
   return (
     <Card>

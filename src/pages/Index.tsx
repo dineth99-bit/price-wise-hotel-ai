@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +8,7 @@ import ForecastChart from '@/components/charts/ForecastChart';
 import OptimizationPanel from '@/components/optimization/OptimizationPanel';
 import PriceRecommendationChart from '@/components/charts/PriceRecommendationChart';
 import RevenueImpactChart from '@/components/charts/RevenueImpactChart';
-import RecommendationSummary from '@/components/dashboard/RecommendationSummary';
+import RevenueImpactAnalysis from '@/components/dashboard/RevenueImpactAnalysis';
 import StatCard from '@/components/dashboard/StatCard';
 import { 
   agents as initialAgents, 
@@ -34,6 +33,7 @@ const Index: React.FC = () => {
   const [agents, setAgents] = useState<Agent[]>(initialAgents);
   const [selectedRoomType, setSelectedRoomType] = useState(roomTypes[0].id);
   const [selectedSegment, setSelectedSegment] = useState(customerSegments[0].id);
+  const [showRevenueAnalysis, setShowRevenueAnalysis] = useState(false);
   
   const initialConstraints: OptimizationConstraints = {
     min_price: 80,
@@ -81,7 +81,7 @@ const Index: React.FC = () => {
   );
   const yesterdayOccupancy = yesterdayForecasts ? yesterdayForecasts.predicted_demand : 0;
   const occupancyChange = yesterdayOccupancy ? 
-    Math.round(((todayOccupancy - yesterdayOccupancy) / yesterdayOccupancy) * 100) : 
+    Math.round(((todayOccupancy - yesterdayOccupancy) / yesterdayOccupancy) * 100 * 100) / 100 : 
     0;
 
   // Calculate revenue optimization impact
@@ -114,7 +114,7 @@ const Index: React.FC = () => {
     }
     
     const revenueDifference = totalActualRevenue - totalProjectedRevenue;
-    const percentageIncrease = ((revenueDifference / totalProjectedRevenue) * 100);
+    const percentageIncrease = Math.round(((revenueDifference / totalProjectedRevenue) * 100) * 100) / 100;
     
     return {
       difference: revenueDifference,
@@ -141,28 +141,30 @@ const Index: React.FC = () => {
         </div>
         
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
-          <StatCard 
-            title="Revenue Impact" 
-            value={`$${Math.round(revenueImpact.difference / 1000)}k`}
-            change={revenueImpact.percentage}
-            icon={<DollarSign />}
-          />
+          <div onClick={() => setShowRevenueAnalysis(true)} className="cursor-pointer">
+            <StatCard 
+              title="Revenue Impact" 
+              value={`$${Math.round(revenueImpact.difference / 1000)}k`}
+              change={revenueImpact.percentage}
+              icon={<DollarSign />}
+            />
+          </div>
           <StatCard 
             title="Expected Occupancy" 
             value={`${todayOccupancy}%`}
-            change={occupancyChange}
+            change={Math.round(occupancyChange * 100) / 100}
             icon={<UserCheck />}
           />
           <StatCard 
             title="ADR Forecast" 
             value={`$${forecastData[0]?.trend_price.toFixed(0) || 0}`} 
-            change={2.5}
+            change={2.50}
             icon={<TrendingUp />}
           />
           <StatCard 
             title="RevPAR Potential" 
             value={`$${(forecastData[0]?.trend_price * (todayOccupancy / 100)).toFixed(0) || 0}`}
-            change={3.8}
+            change={3.80}
             icon={<BarChart3 />}
           />
           <StatCard 
@@ -180,8 +182,6 @@ const Index: React.FC = () => {
           </TabsList>
           
           <TabsContent value="dashboard" className="space-y-4">
-            <RecommendationSummary recommendations={priceRecommendations} />
-            
             <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
               <Card className="col-span-1 lg:col-span-2">
                 <CardHeader>
@@ -243,7 +243,7 @@ const Index: React.FC = () => {
                             {agent.id === 'ltb' && `${todayForecasts?.look_to_book_ratio.toFixed(2)}`}
                             {agent.id === 'trend' && `$${todayForecasts?.trend_price.toFixed(1)}`}
                             {agent.id === 'event' && `+$${todayForecasts?.event_boost.toFixed(1)}`}
-                            {agent.id === 'weather' && `${todayForecasts?.weather_impact.toFixed(1)}%`}
+                            {agent.id === 'weather' && `${todayForecasts?.weather_impact.toFixed(2)}%`}
                             {agent.id === 'cost' && `$${todayForecasts?.cost_estimate.toFixed(1)}`}
                           </span>
                         </div>
@@ -334,6 +334,11 @@ const Index: React.FC = () => {
             </div>
           </TabsContent>
         </Tabs>
+        
+        <RevenueImpactAnalysis 
+          open={showRevenueAnalysis}
+          onOpenChange={setShowRevenueAnalysis}
+        />
       </div>
     </AppLayout>
   );
