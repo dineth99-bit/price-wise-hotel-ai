@@ -7,6 +7,7 @@ import AgentsConfiguration from '@/components/agents/AgentsConfiguration';
 import ForecastChart from '@/components/charts/ForecastChart';
 import OptimizationPanel from '@/components/optimization/OptimizationPanel';
 import PriceRecommendationChart from '@/components/charts/PriceRecommendationChart';
+import RevenueImpactChart from '@/components/charts/RevenueImpactChart';
 import RecommendationSummary from '@/components/dashboard/RecommendationSummary';
 import StatCard from '@/components/dashboard/StatCard';
 import { 
@@ -127,7 +128,7 @@ const Index: React.FC = () => {
           <TabsList>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="agents">Forecasting Agents</TabsTrigger>
-            <TabsTrigger value="optimization">Optimization</TabsTrigger>
+            <TabsTrigger value="optimization">Price Optimization</TabsTrigger>
           </TabsList>
           
           <TabsContent value="dashboard" className="space-y-4">
@@ -213,6 +214,18 @@ const Index: React.FC = () => {
                 </CardContent>
               </Card>
             </div>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue Impact Analysis</CardTitle>
+                <CardDescription>
+                  Comparison of projected, optimized, and actual daily revenue (May 15 - June 15, 2025)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RevenueImpactChart />
+              </CardContent>
+            </Card>
           </TabsContent>
           
           <TabsContent value="agents" className="space-y-4">
