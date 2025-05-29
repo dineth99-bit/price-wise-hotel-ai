@@ -7,9 +7,10 @@ interface StatCardProps {
   value: string | number;
   change?: number;
   icon?: React.ReactNode;
+  subtitle?: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon }) => {
+const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon, subtitle }) => {
   const changeColor = change === undefined 
     ? '' 
     : change > 0 
@@ -38,6 +39,9 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon }) => {
                 </span>
               )}
             </div>
+            {subtitle && (
+              <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
+            )}
           </div>
           {icon && (
             <div className="p-2 bg-primary/10 rounded-full">

@@ -147,6 +147,7 @@ const Index: React.FC = () => {
               value={`$${Math.round(revenueImpact.difference / 1000)}k`}
               change={revenueImpact.percentage}
               icon={<DollarSign />}
+              subtitle="Click for more details"
             />
           </div>
           <StatCard 
