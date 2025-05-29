@@ -48,7 +48,7 @@ const MappingGraph: React.FC<MappingGraphProps> = ({
             const competitorTypes = getCompetitorRoomTypes(roomType.id);
             
             return (
-              <div key={roomType.id} className="flex items-center gap-4">
+              <div key={roomType.id} className="flex items-start gap-4">
                 {/* Your Hotel Room Type */}
                 <div className="flex-shrink-0 w-64">
                   <div className="bg-blue-500 text-white px-4 py-3 rounded-lg text-center font-medium shadow-md">
@@ -57,25 +57,64 @@ const MappingGraph: React.FC<MappingGraphProps> = ({
                   </div>
                 </div>
 
-                {/* Arrow(s) and Competitor Room Types */}
+                {/* Connection and Competitor Room Types */}
                 {competitorTypes.length > 0 ? (
-                  <div className="flex-1 space-y-3">
-                    {competitorTypes.map((competitorType, index) => (
-                      <div key={index} className="flex items-center gap-4">
-                        {/* Arrow */}
+                  <div className="flex-1 relative">
+                    {competitorTypes.length === 1 ? (
+                      // Single mapping - direct arrow
+                      <div className="flex items-center gap-4">
                         <div className="flex items-center">
                           <ArrowRight className="h-5 w-5 text-gray-400" />
                         </div>
-                        
-                        {/* Competitor Room Type */}
                         <div className="flex-1 max-w-md">
                           <div className="bg-teal-500 text-white px-4 py-2 rounded-lg text-center font-medium shadow-md">
                             <div className="text-xs text-teal-100 mb-1">{selectedHotel?.name}</div>
-                            {competitorType}
+                            {competitorTypes[0]}
                           </div>
                         </div>
                       </div>
-                    ))}
+                    ) : (
+                      // Multiple mappings - with vertical connector
+                      <div className="relative">
+                        {/* Initial horizontal line */}
+                        <div className="flex items-start">
+                          <div className="flex items-center pt-3">
+                            <div className="w-12 h-0.5 bg-gray-400"></div>
+                          </div>
+                          
+                          {/* Vertical connector and branches */}
+                          <div className="relative flex-1">
+                            {/* Vertical line */}
+                            <div 
+                              className="absolute left-0 w-0.5 bg-gray-400"
+                              style={{
+                                top: '12px',
+                                height: `${(competitorTypes.length - 1) * 60 + 24}px`
+                              }}
+                            ></div>
+                            
+                            {/* Competitor room types with horizontal connectors */}
+                            <div className="space-y-4">
+                              {competitorTypes.map((competitorType, index) => (
+                                <div key={index} className="flex items-center gap-4 relative">
+                                  {/* Horizontal connector from vertical line */}
+                                  <div className="w-8 h-0.5 bg-gray-400"></div>
+                                  <ArrowRight className="h-4 w-4 text-gray-400 -ml-2" />
+                                  
+                                  {/* Competitor Room Type */}
+                                  <div className="flex-1 max-w-md">
+                                    <div className="bg-teal-500 text-white px-4 py-2 rounded-lg text-center font-medium shadow-md">
+                                      <div className="text-xs text-teal-100 mb-1">{selectedHotel?.name}</div>
+                                      {competitorType}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex-1 flex items-center gap-4">
