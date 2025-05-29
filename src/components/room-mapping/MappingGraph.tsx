@@ -44,6 +44,23 @@ const MappingGraph: React.FC<MappingGraphProps> = ({
 
   const allCompetitorTypes = getAllCompetitorRoomTypes();
 
+  // Create connection data for proper line drawing
+  const connections = [];
+  yourRoomTypes.forEach((yourRoom, yourIndex) => {
+    const competitorTypes = getCompetitorRoomTypes(yourRoom.id);
+    competitorTypes.forEach(competitorType => {
+      const competitorIndex = allCompetitorTypes.indexOf(competitorType);
+      if (competitorIndex !== -1) {
+        connections.push({
+          yourIndex,
+          competitorIndex,
+          yourRoomType: yourRoom.name,
+          competitorRoomType: competitorType
+        });
+      }
+    });
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -52,9 +69,9 @@ const MappingGraph: React.FC<MappingGraphProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-between items-start gap-8 min-h-[400px]">
+        <div className="relative flex justify-between items-start gap-8 min-h-[400px]">
           {/* Your Hotel Side */}
-          <div className="flex-1">
+          <div className="flex-1 z-10">
             <div className="text-center mb-6">
               <Badge variant="secondary" className="text-lg px-4 py-2 bg-blue-100 text-blue-800">
                 Your Hotel
@@ -63,51 +80,59 @@ const MappingGraph: React.FC<MappingGraphProps> = ({
             <div className="space-y-4">
               {yourRoomTypes.map((roomType, index) => (
                 <div key={roomType.id} className="relative">
-                  <div className="bg-blue-500 text-white px-4 py-3 rounded-lg text-center font-medium shadow-md">
+                  <div 
+                    className="bg-blue-500 text-white px-4 py-3 rounded-lg text-center font-medium shadow-md"
+                    id={`your-room-${index}`}
+                  >
                     {roomType.name}
                   </div>
-                  {/* Connection lines */}
-                  {getCompetitorRoomTypes(roomType.id).length > 0 && (
-                    <div className="absolute top-1/2 right-0 w-8 h-0.5 bg-gray-300 transform translate-x-full -translate-y-1/2"></div>
-                  )}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Connection Area */}
-          <div className="flex-shrink-0 w-16 relative">
-            <div className="absolute inset-0 flex flex-col justify-center">
-              {yourRoomTypes.map((roomType, index) => {
-                const competitorTypes = getCompetitorRoomTypes(roomType.id);
-                return competitorTypes.map((_, connIndex) => (
-                  <div
-                    key={`${roomType.id}-${connIndex}`}
-                    className="h-0.5 bg-gray-300 mb-2"
-                    style={{
-                      marginTop: index * 60 + connIndex * 8 + 'px'
-                    }}
-                  ></div>
-                ));
+          {/* Connection SVG */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            <svg className="w-full h-full">
+              {connections.map((connection, index) => {
+                const yourY = 100 + connection.yourIndex * 72 + 24; // 72px spacing + 24px center
+                const competitorY = 100 + connection.competitorIndex * 60 + 20; // 60px spacing + 20px center
+                const startX = window.innerWidth < 768 ? 200 : 280; // Responsive start point
+                const endX = window.innerWidth < 768 ? window.innerWidth - 200 : window.innerWidth - 280; // Responsive end point
+                
+                return (
+                  <line
+                    key={`connection-${index}`}
+                    x1={startX}
+                    y1={yourY}
+                    x2={endX}
+                    y2={competitorY}
+                    stroke="#94a3b8"
+                    strokeWidth="2"
+                    strokeDasharray="5,5"
+                    opacity="0.7"
+                  />
+                );
               })}
-            </div>
+            </svg>
           </div>
 
           {/* Competitor Hotel Side */}
-          <div className="flex-1">
+          <div className="flex-1 z-10">
             <div className="text-center mb-6">
               <Badge variant="secondary" className="text-lg px-4 py-2 bg-teal-100 text-teal-800">
                 {selectedHotel?.name}
               </Badge>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {allCompetitorTypes.map((competitorType, index) => (
                 <div key={competitorType} className="relative">
-                  <div className="bg-teal-500 text-white px-4 py-2 rounded-lg text-center font-medium shadow-md text-sm">
+                  <div 
+                    className="bg-teal-500 text-white px-4 py-2 rounded-lg text-center font-medium shadow-md text-sm"
+                    id={`competitor-room-${index}`}
+                  >
                     {competitorType}
                   </div>
-                  {/* Connection lines */}
-                  <div className="absolute top-1/2 left-0 w-8 h-0.5 bg-gray-300 transform -translate-x-full -translate-y-1/2"></div>
                 </div>
               ))}
               
@@ -120,7 +145,7 @@ const MappingGraph: React.FC<MappingGraphProps> = ({
           </div>
         </div>
 
-        {/* Legend */}
+        {/* Connection Legend */}
         <div className="mt-8 pt-4 border-t">
           <div className="flex justify-center gap-8">
             <div className="flex items-center gap-2">
@@ -132,7 +157,7 @@ const MappingGraph: React.FC<MappingGraphProps> = ({
               <span className="text-sm text-gray-600">Competitor Room Types</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-0.5 bg-gray-300"></div>
+              <div className="w-8 h-0.5 bg-gray-400 opacity-70" style={{borderTop: '2px dashed #94a3b8'}}></div>
               <span className="text-sm text-gray-600">Mapping Connection</span>
             </div>
           </div>

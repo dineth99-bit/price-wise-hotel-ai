@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,31 +32,31 @@ const initialCompetitorHotels: CompetitorHotel[] = [
   { id: 'sheraton', name: 'Sheraton Grand' }
 ];
 
-// Initial mappings (converted from the old format)
+// Initial mappings with examples of many-to-one relationships
 const initialMappings: Record<string, RoomMapping[]> = {
   'marriott': [
-    { yourRoomType: 'standard', competitorRoomTypes: ['Standard King Room'] },
+    { yourRoomType: 'standard', competitorRoomTypes: ['Standard King Room', 'Standard Queen Room'] },
     { yourRoomType: 'deluxe', competitorRoomTypes: ['Deluxe Room with City View'] },
-    { yourRoomType: 'suite', competitorRoomTypes: ['Executive Suite'] },
+    { yourRoomType: 'suite', competitorRoomTypes: ['Executive Suite', 'Junior Suite'] },
     { yourRoomType: 'executive', competitorRoomTypes: ['Presidential Suite'] }
   ],
   'hilton': [
     { yourRoomType: 'standard', competitorRoomTypes: ['Guest Room'] },
-    { yourRoomType: 'deluxe', competitorRoomTypes: ['Premium Room'] },
-    { yourRoomType: 'suite', competitorRoomTypes: ['Junior Suite'] },
-    { yourRoomType: 'executive', competitorRoomTypes: ['Executive Suite'] }
+    { yourRoomType: 'deluxe', competitorRoomTypes: ['Premium Room', 'Premium King'] },
+    { yourRoomType: 'suite', competitorRoomTypes: ['Business Suite'] },
+    { yourRoomType: 'executive', competitorRoomTypes: ['Executive Suite', 'Presidential Suite'] }
   ],
   'hyatt': [
-    { yourRoomType: 'standard', competitorRoomTypes: ['Standard Room'] },
+    { yourRoomType: 'standard', competitorRoomTypes: ['Standard Room', 'Classic Room'] },
     { yourRoomType: 'deluxe', competitorRoomTypes: ['Deluxe King'] },
     { yourRoomType: 'suite', competitorRoomTypes: ['Regency Suite'] },
-    { yourRoomType: 'executive', competitorRoomTypes: ['Ambassador Suite'] }
+    { yourRoomType: 'executive', competitorRoomTypes: ['Ambassador Suite', 'Grand Suite'] }
   ],
   'sheraton': [
     { yourRoomType: 'standard', competitorRoomTypes: ['Traditional Room'] },
-    { yourRoomType: 'deluxe', competitorRoomTypes: ['Club Room'] },
+    { yourRoomType: 'deluxe', competitorRoomTypes: ['Club Room', 'Premium Club'] },
     { yourRoomType: 'suite', competitorRoomTypes: ['Sheraton Suite'] },
-    { yourRoomType: 'executive', competitorRoomTypes: ['Grand Suite'] }
+    { yourRoomType: 'executive', competitorRoomTypes: ['Grand Suite', 'Royal Suite'] }
   ]
 };
 
