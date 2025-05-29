@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, X, Building2 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Plus, X, Building2, BarChart, List } from 'lucide-react';
+import MappingGraph from './MappingGraph';
 
 interface CompetitorHotel {
   id: string;
@@ -156,59 +158,83 @@ const HotelMappingManager: React.FC<HotelMappingManagerProps> = ({
       </div>
 
       {selectedCompetitor && (
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              Room Mapping: Your Hotel vs {competitorHotels.find(h => h.id === selectedCompetitor)?.name}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {yourRoomTypes.map((roomType) => (
-                <div key={roomType.id} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-blue-600">{roomType.name}</h3>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-orange-600">
-                      Mapped to {competitorHotels.find(h => h.id === selectedCompetitor)?.name}:
-                    </Label>
-                    
-                    {getCompetitorRoomTypes(roomType.id).map((competitorRoomType, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-orange-50 rounded">
-                        <span>{competitorRoomType}</span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeRoomTypeMapping(roomType.id, competitorRoomType)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+        <Tabs defaultValue="graph" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="graph" className="flex items-center gap-2">
+              <BarChart className="h-4 w-4" />
+              Graph View
+            </TabsTrigger>
+            <TabsTrigger value="list" className="flex items-center gap-2">
+              <List className="h-4 w-4" />
+              List View
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="graph" className="mt-6">
+            <MappingGraph
+              selectedCompetitor={selectedCompetitor}
+              competitorHotels={competitorHotels}
+              yourRoomTypes={yourRoomTypes}
+              mappings={mappings}
+            />
+          </TabsContent>
+          
+          <TabsContent value="list" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  Room Mapping: Your Hotel vs {competitorHotels.find(h => h.id === selectedCompetitor)?.name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {yourRoomTypes.map((roomType) => (
+                    <div key={roomType.id} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-semibold text-blue-600">{roomType.name}</h3>
                       </div>
-                    ))}
-                    
-                    <div className="flex items-center gap-2 mt-2">
-                      <Input
-                        value={newRoomType}
-                        onChange={(e) => setNewRoomType(e.target.value)}
-                        placeholder="Add competitor room type"
-                        className="flex-1"
-                      />
-                      <Button
-                        onClick={() => addRoomTypeMapping(roomType.id)}
-                        disabled={!newRoomType.trim()}
-                        size="sm"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                      
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium text-orange-600">
+                          Mapped to {competitorHotels.find(h => h.id === selectedCompetitor)?.name}:
+                        </Label>
+                        
+                        {getCompetitorRoomTypes(roomType.id).map((competitorRoomType, index) => (
+                          <div key={index} className="flex items-center justify-between p-2 bg-orange-50 rounded">
+                            <span>{competitorRoomType}</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeRoomTypeMapping(roomType.id, competitorRoomType)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                        
+                        <div className="flex items-center gap-2 mt-2">
+                          <Input
+                            value={newRoomType}
+                            onChange={(e) => setNewRoomType(e.target.value)}
+                            placeholder="Add competitor room type"
+                            className="flex-1"
+                          />
+                          <Button
+                            onClick={() => addRoomTypeMapping(roomType.id)}
+                            disabled={!newRoomType.trim()}
+                            size="sm"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       )}
     </div>
   );
