@@ -4,12 +4,19 @@ import AppLayout from '@/components/layout/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 import PickupCurveChart from '@/components/charts/PickupCurveChart';
 import BookingCurveChart from '@/components/charts/BookingCurveChart';
 
 const Analysis: React.FC = () => {
   const [pickupTimePeriod, setPickupTimePeriod] = useState('daily');
   const [bookingTimePeriod, setBookingTimePeriod] = useState('daily');
+  const [arrivalDate, setArrivalDate] = useState<Date>(new Date());
 
   return (
     <AppLayout>
@@ -34,25 +41,50 @@ const Analysis: React.FC = () => {
                   <div>
                     <CardTitle>Pickup Curve Analysis</CardTitle>
                     <CardDescription>
-                      Track reservation pickup patterns over time with forecasting
+                      Track when bookings were made for a specific arrival date
                     </CardDescription>
                   </div>
-                  <Select value={pickupTimePeriod} onValueChange={setPickupTimePeriod}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Time Period" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="daily">Daily</SelectItem>
-                      <SelectItem value="weekly">Weekly</SelectItem>
-                      <SelectItem value="monthly">Monthly</SelectItem>
-                      <SelectItem value="quarterly">Quarterly</SelectItem>
-                      <SelectItem value="yearly">Yearly</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-4">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-[200px] justify-start text-left font-normal",
+                            !arrivalDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {arrivalDate ? format(arrivalDate, "PPP") : <span>Pick arrival date</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={arrivalDate}
+                          onSelect={(date) => date && setArrivalDate(date)}
+                          initialFocus
+                          className="p-3 pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <Select value={pickupTimePeriod} onValueChange={setPickupTimePeriod}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Time Period" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="weekly">Weekly</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="quarterly">Quarterly</SelectItem>
+                        <SelectItem value="yearly">Yearly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <PickupCurveChart timePeriod={pickupTimePeriod} />
+                <PickupCurveChart timePeriod={pickupTimePeriod} arrivalDate={arrivalDate} />
               </CardContent>
             </Card>
           </TabsContent>

@@ -5,50 +5,61 @@ import { format, subDays, subWeeks, subMonths, subQuarters, subYears } from 'dat
 
 interface PickupCurveChartProps {
   timePeriod: string;
+  arrivalDate: Date;
 }
 
-const PickupCurveChart: React.FC<PickupCurveChartProps> = ({ timePeriod }) => {
-  // Generate mock data based on time period
+const PickupCurveChart: React.FC<PickupCurveChartProps> = ({ timePeriod, arrivalDate }) => {
+  // Generate mock data based on time period - showing bookings made for the arrival date
   const generateData = () => {
     const data = [];
-    const today = new Date();
     let periods = 30;
     let formatStr = 'MMM dd';
     let subtractFn = subDays;
+    let baseBookings = 15;
 
     switch (timePeriod) {
       case 'weekly':
         periods = 12;
         formatStr = 'MMM dd';
         subtractFn = subWeeks;
+        baseBookings = 105; // 15 * 7
         break;
       case 'monthly':
         periods = 12;
         formatStr = 'MMM yyyy';
         subtractFn = subMonths;
+        baseBookings = 450; // 15 * 30
         break;
       case 'quarterly':
         periods = 8;
         formatStr = 'QQQ yyyy';
         subtractFn = subQuarters;
+        baseBookings = 1350; // 15 * 90
         break;
       case 'yearly':
         periods = 5;
         formatStr = 'yyyy';
         subtractFn = subYears;
+        baseBookings = 5475; // 15 * 365
         break;
     }
 
+    // Generate data going backwards from arrival date (when bookings were made)
     for (let i = periods - 1; i >= 0; i--) {
-      const date = subtractFn(today, i);
-      const basePickup = 65 + Math.sin(i * 0.2) * 15 + (Math.random() - 0.5) * 10;
-      const actualPickup = basePickup + (Math.random() - 0.5) * 20;
+      const bookingDate = subtractFn(arrivalDate, i);
+      
+      // Bookings typically increase closer to arrival date
+      const proximityFactor = Math.max(0.1, (periods - i) / periods);
+      const randomVariation = 0.8 + (Math.random() * 0.4); // 0.8 to 1.2
+      
+      const predictedBookings = Math.round(baseBookings * proximityFactor * randomVariation);
+      const actualBookings = Math.round(predictedBookings * (0.85 + Math.random() * 0.3)); // 0.85 to 1.15 of predicted
       
       data.push({
-        period: format(date, formatStr),
-        predicted: Math.round(basePickup),
-        actual: Math.round(actualPickup),
-        trend: Math.round(basePickup * 1.05)
+        period: format(bookingDate, formatStr),
+        predicted: Math.max(0, predictedBookings),
+        actual: Math.max(0, actualBookings),
+        daysOut: i === 0 ? 'Arrival Day' : `${i} ${timePeriod === 'daily' ? 'days' : timePeriod.slice(0, -2)} before`
       });
     }
 
@@ -68,12 +79,17 @@ const PickupCurveChart: React.FC<PickupCurveChartProps> = ({ timePeriod }) => {
             interval="preserveStartEnd"
           />
           <YAxis 
-            label={{ value: 'Pickup Rate (%)', angle: -90, position: 'insideLeft' }}
+            label={{ value: 'Bookings Made', angle: -90, position: 'insideLeft' }}
             tick={{ fontSize: 12 }}
           />
           <Tooltip 
-            formatter={(value, name) => [`${value}%`, name]}
-            labelFormatter={(label) => `Period: ${label}`}
+            formatter={(value, name) => [value, name]}
+            labelFormatter={(label) => `Booking Period: ${label}`}
+            contentStyle={{ 
+              backgroundColor: 'white', 
+              border: '1px solid #ccc',
+              borderRadius: '8px'
+            }}
           />
           <Legend />
           <Line 
@@ -81,7 +97,7 @@ const PickupCurveChart: React.FC<PickupCurveChartProps> = ({ timePeriod }) => {
             dataKey="predicted" 
             stroke="#8884d8" 
             strokeWidth={2}
-            name="Predicted Pickup"
+            name="Predicted Bookings"
             dot={{ r: 4 }}
           />
           <Line 
@@ -89,16 +105,7 @@ const PickupCurveChart: React.FC<PickupCurveChartProps> = ({ timePeriod }) => {
             dataKey="actual" 
             stroke="#82ca9d" 
             strokeWidth={2}
-            name="Actual Pickup"
-            dot={{ r: 4 }}
-          />
-          <Line 
-            type="monotone" 
-            dataKey="trend" 
-            stroke="#ffc658" 
-            strokeWidth={2}
-            strokeDasharray="5 5"
-            name="Trend Forecast"
+            name="Actual Bookings"
             dot={{ r: 4 }}
           />
         </LineChart>
