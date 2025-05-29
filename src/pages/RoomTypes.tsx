@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BedIcon, EditIcon, Plus, TagIcon } from 'lucide-react';
+import { EditIcon, Plus, TagIcon } from 'lucide-react';
 import { roomTypes } from '@/data/mockData';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import HotelMappingManager from '@/components/room-mapping/HotelMappingManager';
 
 // Room type images mapping
 const roomTypeImages = {
@@ -15,47 +15,72 @@ const roomTypeImages = {
   'executive': 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&h=300&fit=crop'
 };
 
-// Mock competitor hotels
-const competitorHotels = [
+interface CompetitorHotel {
+  id: string;
+  name: string;
+}
+
+interface RoomMapping {
+  yourRoomType: string;
+  competitorRoomTypes: string[];
+}
+
+// Initial competitor hotels
+const initialCompetitorHotels: CompetitorHotel[] = [
   { id: 'marriott', name: 'Marriott Downtown' },
   { id: 'hilton', name: 'Hilton City Center' },
   { id: 'hyatt', name: 'Hyatt Regency' },
   { id: 'sheraton', name: 'Sheraton Grand' }
-] as const;
+];
 
-type CompetitorId = typeof competitorHotels[number]['id'];
-type RoomTypeId = 'standard' | 'deluxe' | 'suite' | 'executive';
-
-// Mock mapping data
-const roomMappings: Record<CompetitorId, Record<RoomTypeId, string>> = {
-  'marriott': {
-    'standard': 'Standard King Room',
-    'deluxe': 'Deluxe Room with City View',
-    'suite': 'Executive Suite',
-    'executive': 'Presidential Suite'
-  },
-  'hilton': {
-    'standard': 'Guest Room',
-    'deluxe': 'Premium Room',
-    'suite': 'Junior Suite',
-    'executive': 'Executive Suite'
-  },
-  'hyatt': {
-    'standard': 'Standard Room',
-    'deluxe': 'Deluxe King',
-    'suite': 'Regency Suite',
-    'executive': 'Ambassador Suite'
-  },
-  'sheraton': {
-    'standard': 'Traditional Room',
-    'deluxe': 'Club Room',
-    'suite': 'Sheraton Suite',
-    'executive': 'Grand Suite'
-  }
+// Initial mappings (converted from the old format)
+const initialMappings: Record<string, RoomMapping[]> = {
+  'marriott': [
+    { yourRoomType: 'standard', competitorRoomTypes: ['Standard King Room'] },
+    { yourRoomType: 'deluxe', competitorRoomTypes: ['Deluxe Room with City View'] },
+    { yourRoomType: 'suite', competitorRoomTypes: ['Executive Suite'] },
+    { yourRoomType: 'executive', competitorRoomTypes: ['Presidential Suite'] }
+  ],
+  'hilton': [
+    { yourRoomType: 'standard', competitorRoomTypes: ['Guest Room'] },
+    { yourRoomType: 'deluxe', competitorRoomTypes: ['Premium Room'] },
+    { yourRoomType: 'suite', competitorRoomTypes: ['Junior Suite'] },
+    { yourRoomType: 'executive', competitorRoomTypes: ['Executive Suite'] }
+  ],
+  'hyatt': [
+    { yourRoomType: 'standard', competitorRoomTypes: ['Standard Room'] },
+    { yourRoomType: 'deluxe', competitorRoomTypes: ['Deluxe King'] },
+    { yourRoomType: 'suite', competitorRoomTypes: ['Regency Suite'] },
+    { yourRoomType: 'executive', competitorRoomTypes: ['Ambassador Suite'] }
+  ],
+  'sheraton': [
+    { yourRoomType: 'standard', competitorRoomTypes: ['Traditional Room'] },
+    { yourRoomType: 'deluxe', competitorRoomTypes: ['Club Room'] },
+    { yourRoomType: 'suite', competitorRoomTypes: ['Sheraton Suite'] },
+    { yourRoomType: 'executive', competitorRoomTypes: ['Grand Suite'] }
+  ]
 };
 
 const RoomTypes: React.FC = () => {
-  const [selectedCompetitor, setSelectedCompetitor] = useState<CompetitorId | ''>('');
+  const [competitorHotels, setCompetitorHotels] = useState<CompetitorHotel[]>(initialCompetitorHotels);
+  const [selectedCompetitor, setSelectedCompetitor] = useState<string>('');
+  const [mappings, setMappings] = useState<Record<string, RoomMapping[]>>(initialMappings);
+
+  const handleAddHotel = (hotel: CompetitorHotel) => {
+    setCompetitorHotels(prev => [...prev, hotel]);
+    // Initialize empty mappings for the new hotel
+    setMappings(prev => ({
+      ...prev,
+      [hotel.id]: []
+    }));
+  };
+
+  const handleUpdateMappings = (competitorId: string, newMappings: RoomMapping[]) => {
+    setMappings(prev => ({
+      ...prev,
+      [competitorId]: newMappings
+    }));
+  };
   
   return (
     <AppLayout>
@@ -114,68 +139,15 @@ const RoomTypes: React.FC = () => {
         </div>
 
         {/* Room Types Mapping Section */}
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-xl font-bold tracking-tight mb-2">Room Types Mapping</h2>
-            <p className="text-muted-foreground">
-              Compare your room types with competitor hotels
-            </p>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <label className="text-sm font-medium">Select Competitor:</label>
-            <Select value={selectedCompetitor} onValueChange={(value: CompetitorId) => setSelectedCompetitor(value)}>
-              <SelectTrigger className="w-[250px]">
-                <SelectValue placeholder="Choose a competitor hotel" />
-              </SelectTrigger>
-              <SelectContent>
-                {competitorHotels.map((hotel) => (
-                  <SelectItem key={hotel.id} value={hotel.id}>
-                    {hotel.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {selectedCompetitor && (
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  Room Mapping: Your Hotel vs {competitorHotels.find(h => h.id === selectedCompetitor)?.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="font-semibold mb-3 text-blue-600">Your Hotel</h3>
-                    <div className="space-y-2">
-                      {roomTypes.map((room) => (
-                        <div key={room.id} className="p-3 bg-blue-50 rounded-lg">
-                          <span className="font-medium">{room.name}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-3 text-orange-600">
-                      {competitorHotels.find(h => h.id === selectedCompetitor)?.name}
-                    </h3>
-                    <div className="space-y-2">
-                      {roomTypes.map((room) => (
-                        <div key={room.id} className="p-3 bg-orange-50 rounded-lg">
-                          <span className="font-medium">
-                            {roomMappings[selectedCompetitor]?.[room.id as RoomTypeId] || 'No mapping available'}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+        <HotelMappingManager
+          competitorHotels={competitorHotels}
+          yourRoomTypes={roomTypes}
+          onAddHotel={handleAddHotel}
+          selectedCompetitor={selectedCompetitor}
+          onSelectCompetitor={setSelectedCompetitor}
+          mappings={mappings}
+          onUpdateMappings={handleUpdateMappings}
+        />
       </div>
     </AppLayout>
   );
