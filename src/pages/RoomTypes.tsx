@@ -21,10 +21,13 @@ const competitorHotels = [
   { id: 'hilton', name: 'Hilton City Center' },
   { id: 'hyatt', name: 'Hyatt Regency' },
   { id: 'sheraton', name: 'Sheraton Grand' }
-];
+] as const;
+
+type CompetitorId = typeof competitorHotels[number]['id'];
+type RoomTypeId = 'standard' | 'deluxe' | 'suite' | 'executive';
 
 // Mock mapping data
-const roomMappings = {
+const roomMappings: Record<CompetitorId, Record<RoomTypeId, string>> = {
   'marriott': {
     'standard': 'Standard King Room',
     'deluxe': 'Deluxe Room with City View',
@@ -52,7 +55,7 @@ const roomMappings = {
 };
 
 const RoomTypes: React.FC = () => {
-  const [selectedCompetitor, setSelectedCompetitor] = useState<string>('');
+  const [selectedCompetitor, setSelectedCompetitor] = useState<CompetitorId | ''>('');
   
   return (
     <AppLayout>
@@ -121,7 +124,7 @@ const RoomTypes: React.FC = () => {
 
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium">Select Competitor:</label>
-            <Select value={selectedCompetitor} onValueChange={setSelectedCompetitor}>
+            <Select value={selectedCompetitor} onValueChange={(value: CompetitorId) => setSelectedCompetitor(value)}>
               <SelectTrigger className="w-[250px]">
                 <SelectValue placeholder="Choose a competitor hotel" />
               </SelectTrigger>
@@ -162,7 +165,7 @@ const RoomTypes: React.FC = () => {
                       {roomTypes.map((room) => (
                         <div key={room.id} className="p-3 bg-orange-50 rounded-lg">
                           <span className="font-medium">
-                            {roomMappings[selectedCompetitor as keyof typeof roomMappings]?.[room.id as keyof typeof roomMappings[typeof selectedCompetitor]] || 'No mapping available'}
+                            {roomMappings[selectedCompetitor]?.[room.id as RoomTypeId] || 'No mapping available'}
                           </span>
                         </div>
                       ))}
