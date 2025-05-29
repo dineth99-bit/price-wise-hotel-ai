@@ -23,6 +23,11 @@ const ChatbotWidget: React.FC = () => {
     setShowWelcome(false); // Hide welcome message when clicked
   };
 
+  const handleWelcomeClick = () => {
+    setIsOpen(true);
+    setShowWelcome(false);
+  };
+
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {/* Welcome popup */}
@@ -35,7 +40,10 @@ const ChatbotWidget: React.FC = () => {
                 <div className="w-2 h-2 bg-cyan-400 rounded-full ml-1"></div>
               </div>
               <div className="flex-1">
-                <div className="bg-cyan-400 text-blue-900 px-3 py-2 rounded-lg text-sm font-medium">
+                <div 
+                  className="bg-cyan-400 text-blue-900 px-3 py-2 rounded-lg text-sm font-medium cursor-pointer hover:bg-cyan-300 transition-colors"
+                  onClick={handleWelcomeClick}
+                >
                   HI!
                 </div>
                 <p className="text-sm text-gray-600 mt-2">
