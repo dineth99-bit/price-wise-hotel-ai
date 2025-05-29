@@ -9,7 +9,8 @@ import {
   BedIcon,
   CalendarIcon,
   AlertCircleIcon,
-  DatabaseIcon
+  DatabaseIcon,
+  BarChart3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
@@ -61,6 +62,12 @@ const AppSidebar: React.FC = () => {
             label="Forecasts" 
             to="/forecasts" 
             active={currentPath.startsWith('/forecasts')} 
+          />
+          <NavItem 
+            icon={<BarChart3 />} 
+            label="Analysis" 
+            to="/analysis" 
+            active={currentPath.startsWith('/analysis')} 
           />
           <NavItem 
             icon={<BedIcon />} 
