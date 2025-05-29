@@ -6,12 +6,12 @@ import { EditIcon, Plus, TagIcon } from 'lucide-react';
 import { roomTypes } from '@/data/mockData';
 import HotelMappingManager from '@/components/room-mapping/HotelMappingManager';
 
-// Room type images mapping
+// Room type images mapping with more meaningful images
 const roomTypeImages = {
-  'standard': 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=300&fit=crop',
-  'deluxe': 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop',
-  'suite': 'https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=300&fit=crop',
-  'executive': 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&h=300&fit=crop'
+  'standard': 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&h=300&fit=crop', // Standard hotel room with clean bed
+  'deluxe': 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&h=300&fit=crop', // Deluxe room with city view
+  'suite': 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400&h=300&fit=crop', // Luxury suite with living area
+  'executive': 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=400&h=300&fit=crop' // Executive suite with premium furnishing
 };
 
 interface CompetitorHotel {
@@ -107,7 +107,7 @@ const RoomTypes: React.FC = () => {
                 <img
                   src={roomTypeImages[room.id as keyof typeof roomTypeImages] || roomTypeImages.standard}
                   alt={room.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                 />
               </div>
               <CardHeader>

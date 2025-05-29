@@ -40,7 +40,8 @@ const HotelMappingManager: React.FC<HotelMappingManagerProps> = ({
 }) => {
   const [newHotelName, setNewHotelName] = useState('');
   const [showAddHotel, setShowAddHotel] = useState(false);
-  const [newRoomType, setNewRoomType] = useState('');
+  // Change to track input per room type
+  const [newRoomTypes, setNewRoomTypes] = useState<Record<string, string>>({});
 
   const handleAddHotel = () => {
     if (newHotelName.trim()) {
@@ -57,7 +58,8 @@ const HotelMappingManager: React.FC<HotelMappingManagerProps> = ({
   const currentMappings = mappings[selectedCompetitor] || [];
 
   const addRoomTypeMapping = (yourRoomTypeId: string) => {
-    if (newRoomType.trim()) {
+    const newRoomType = newRoomTypes[yourRoomTypeId];
+    if (newRoomType?.trim()) {
       const updatedMappings = [...currentMappings];
       const existingMapping = updatedMappings.find(m => m.yourRoomType === yourRoomTypeId);
       
@@ -71,7 +73,8 @@ const HotelMappingManager: React.FC<HotelMappingManagerProps> = ({
       }
       
       onUpdateMappings(selectedCompetitor, updatedMappings);
-      setNewRoomType('');
+      // Clear only this specific input
+      setNewRoomTypes(prev => ({ ...prev, [yourRoomTypeId]: '' }));
     }
   };
 
@@ -92,6 +95,10 @@ const HotelMappingManager: React.FC<HotelMappingManagerProps> = ({
   const getCompetitorRoomTypes = (yourRoomTypeId: string): string[] => {
     const mapping = currentMappings.find(m => m.yourRoomType === yourRoomTypeId);
     return mapping ? mapping.competitorRoomTypes : [];
+  };
+
+  const updateNewRoomType = (yourRoomTypeId: string, value: string) => {
+    setNewRoomTypes(prev => ({ ...prev, [yourRoomTypeId]: value }));
   };
 
   return (
@@ -214,14 +221,15 @@ const HotelMappingManager: React.FC<HotelMappingManagerProps> = ({
                         
                         <div className="flex items-center gap-2 mt-2">
                           <Input
-                            value={newRoomType}
-                            onChange={(e) => setNewRoomType(e.target.value)}
+                            key={`${selectedCompetitor}-${roomType.id}`} // Unique key for each input
+                            value={newRoomTypes[roomType.id] || ''}
+                            onChange={(e) => updateNewRoomType(roomType.id, e.target.value)}
                             placeholder="Add competitor room type"
                             className="flex-1"
                           />
                           <Button
                             onClick={() => addRoomTypeMapping(roomType.id)}
-                            disabled={!newRoomType.trim()}
+                            disabled={!newRoomTypes[roomType.id]?.trim()}
                             size="sm"
                           >
                             <Plus className="h-4 w-4" />
