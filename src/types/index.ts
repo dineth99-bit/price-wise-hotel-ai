@@ -1,5 +1,5 @@
 // Agent Types
-export type AgentType = 'demand' | 'elasticity' | 'ltb' | 'trend' | 'event' | 'weather' | 'cost';
+export type AgentType = 'demand' | 'elasticity' | 'ltb' | 'trend' | 'event' | 'weather' | 'competitor' | 'macro' | 'cost';
 
 export interface SubFactor {
   id: string;
@@ -33,6 +33,8 @@ export interface ForecastData {
   trend_price: number;
   weather_impact: number;
   event_boost: number;
+  competitor_impact: number;
+  macro_impact: number;
   cost_estimate: number;
 }
 
@@ -65,7 +67,7 @@ export interface RoomType {
   basePrice: number;
   capacity: number;
   inventory: number;
-  description?: string; // Added this property
+  description?: string;
 }
 
 // Customer Segments
@@ -74,7 +76,7 @@ export interface CustomerSegment {
   name: string;
   priceMultiplier: number;
   description: string;
-  priceSensitivity?: string; // Added this property
-  averageBookingValue?: number; // Added this property
-  specialConditions?: string[]; // Added this property
+  priceSensitivity?: string;
+  averageBookingValue?: number;
+  specialConditions?: string[];
 }

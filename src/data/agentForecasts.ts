@@ -65,6 +65,22 @@ export const generateAgentForecasts = (agentId: string): AgentForecast[] => {
         confidenceRange = 5;
         break;
         
+      case 'competitor':
+        // Competitor impact: -10 to +10 (negative = competitors have advantage)
+        value = Math.sin(condition.index / 10) * 8 + (Math.random() - 0.5) * 4;
+        if (condition.isWeekend) value *= 0.8; // Less competitor impact on weekends
+        value = Math.max(-15, Math.min(15, value));
+        confidenceRange = 6;
+        break;
+        
+      case 'macro':
+        // Macro impact: -5 to +5 (economic conditions)
+        value = condition.economicSentiment * 10 - 5; // Convert to -5 to +5 range
+        value += Math.sin(condition.index / 20) * 2; // Economic cycles
+        value = Math.max(-8, Math.min(8, value + (Math.random() - 0.5) * 2));
+        confidenceRange = 3;
+        break;
+        
       case 'cost':
         // Operational cost: $30-$60 per room
         value = 40 * condition.trendFactor; // Costs trend upward
