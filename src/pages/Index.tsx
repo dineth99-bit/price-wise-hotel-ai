@@ -240,11 +240,12 @@ const Index: React.FC = () => {
                           </div>
                           <span className="text-sm font-medium">
                             {agent.id === 'demand' && `${todayForecasts?.predicted_demand}%`}
-                            {agent.id === 'elasticity' && `${todayForecasts?.price_elasticity.toFixed(2)}`}
+                            {agent.id === 'elasticity-graph' && `${todayForecasts?.price_elasticity.toFixed(2)}`}
                             {agent.id === 'ltb' && `${todayForecasts?.look_to_book_ratio.toFixed(2)}`}
                             {agent.id === 'trend' && `$${todayForecasts?.trend_price.toFixed(1)}`}
                             {agent.id === 'event' && `+$${todayForecasts?.event_boost.toFixed(1)}`}
                             {agent.id === 'weather' && `${todayForecasts?.weather_impact.toFixed(2)}%`}
+                            {agent.id === 'macro' && `${todayForecasts?.macro_impact.toFixed(2)}%`}
                             {agent.id === 'cost' && `$${todayForecasts?.cost_estimate.toFixed(1)}`}
                           </span>
                         </div>

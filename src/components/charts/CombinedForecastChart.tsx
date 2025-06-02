@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
@@ -54,7 +53,7 @@ const CombinedForecastChart: React.FC<CombinedForecastChartProps> = ({
             case 'demand':
               normalizedValue = Math.min(100, Math.max(0, forecast.value));
               break;
-            case 'elasticity':
+            case 'elasticity-graph':
               normalizedValue = Math.min(100, Math.max(0, (forecast.value + 3) * 16.67)); // Convert -3 to 0 range to 0-100
               break;
             case 'ltb':
