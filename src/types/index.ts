@@ -1,5 +1,5 @@
 // Agent Types
-export type AgentType = 'demand' | 'elasticity' | 'ltb' | 'trend' | 'event' | 'weather' | 'competitor' | 'macro' | 'cost';
+export type AgentType = 'demand' | 'elasticity-graph' | 'ltb' | 'trend' | 'event' | 'weather' | 'macro' | 'cost';
 
 export interface SubFactor {
   id: string;

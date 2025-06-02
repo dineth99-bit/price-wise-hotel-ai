@@ -1,4 +1,3 @@
-
 import { Agent } from '../types';
 import { agentSubFactors } from './agentSubFactors';
 
@@ -13,12 +12,12 @@ export const agents: Agent[] = [
     subFactors: agentSubFactors.demand
   },
   {
-    id: 'elasticity',
-    name: 'Elasticity Agent',
-    description: 'Quantify how demand moves when we change price',
+    id: 'elasticity-graph',
+    name: 'Elasticity-Graph Intelligent Agent',
+    description: 'Quantify how demand moves when we change price and track rival behaviour that cannibalises demand',
     color: '#10b981', // green
     enabled: true,
-    subFactors: agentSubFactors.elasticity
+    subFactors: agentSubFactors['elasticity-graph']
   },
   {
     id: 'ltb',
@@ -51,14 +50,6 @@ export const agents: Agent[] = [
     color: '#06b6d4', // cyan
     enabled: true,
     subFactors: agentSubFactors.weather
-  },
-  {
-    id: 'competitor',
-    name: 'Competitor-Graph Agent',
-    description: 'Track rival behaviour that cannibalises demand',
-    color: '#ec4899', // pink
-    enabled: true,
-    subFactors: agentSubFactors.competitor
   },
   {
     id: 'macro',

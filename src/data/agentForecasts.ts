@@ -21,14 +21,19 @@ export const generateAgentForecasts = (agentId: string): AgentForecast[] => {
         confidenceRange = 8;
         break;
         
-      case 'elasticity':
-        // Price elasticity: -0.8 to -2.5 (more negative = more elastic)
+      case 'elasticity-graph':
+        // Combined elasticity and competitor impact: -0.8 to -2.5 (more negative = more elastic)
         value = -1.5;
         if (condition.isWeekend) value *= 0.7; // Less elastic on weekends
         if (condition.hasEvent) value *= 0.6; // Less elastic during events
         value *= condition.economicSentiment; // Economic conditions affect elasticity
+        
+        // Add competitor impact (competitive pressure affects elasticity)
+        const competitorPressure = Math.sin(condition.index / 10) * 0.3;
+        value += competitorPressure;
+        
         value = Math.max(-3, Math.min(-0.5, value + (Math.random() - 0.5) * 0.3));
-        confidenceRange = 0.4;
+        confidenceRange = 0.5;
         break;
         
       case 'ltb':
@@ -63,14 +68,6 @@ export const generateAgentForecasts = (agentId: string): AgentForecast[] => {
         if (Math.abs(value) > 12) value *= 1.5;
         value = Math.max(-20, Math.min(20, value + (Math.random() - 0.5) * 6));
         confidenceRange = 5;
-        break;
-        
-      case 'competitor':
-        // Competitor impact: -10 to +10 (negative = competitors have advantage)
-        value = Math.sin(condition.index / 10) * 8 + (Math.random() - 0.5) * 4;
-        if (condition.isWeekend) value *= 0.8; // Less competitor impact on weekends
-        value = Math.max(-15, Math.min(15, value));
-        confidenceRange = 6;
         break;
         
       case 'macro':

@@ -1,4 +1,3 @@
-
 import { PriceRecommendation, ForecastData } from '../types';
 import { roomTypes, customerSegments } from './roomData';
 import { marketConditions } from './marketConditions';
@@ -9,24 +8,23 @@ export const generateForecastData = (): ForecastData[] => {
   return marketConditions.map((condition) => {
     // Use the same logic as individual agents for consistency
     const demandForecasts = generateAgentForecasts('demand');
-    const elasticityForecasts = generateAgentForecasts('elasticity');
+    const elasticityGraphForecasts = generateAgentForecasts('elasticity-graph');
     const ltbForecasts = generateAgentForecasts('ltb');
     const trendForecasts = generateAgentForecasts('trend');
     const eventForecasts = generateAgentForecasts('event');
     const weatherForecasts = generateAgentForecasts('weather');
-    const competitorForecasts = generateAgentForecasts('competitor');
     const macroForecasts = generateAgentForecasts('macro');
     const costForecasts = generateAgentForecasts('cost');
     
     return {
       timestamp: condition.date,
       predicted_demand: Math.round(demandForecasts[condition.index].value),
-      price_elasticity: elasticityForecasts[condition.index].value,
+      price_elasticity: elasticityGraphForecasts[condition.index].value,
       look_to_book_ratio: ltbForecasts[condition.index].value,
       trend_price: trendForecasts[condition.index].value,
       weather_impact: weatherForecasts[condition.index].value,
       event_boost: eventForecasts[condition.index].value,
-      competitor_impact: competitorForecasts[condition.index].value,
+      competitor_impact: elasticityGraphForecasts[condition.index].value * 0.3, // Derived from elasticity-graph
       macro_impact: macroForecasts[condition.index].value,
       cost_estimate: costForecasts[condition.index].value
     };

@@ -32,34 +32,76 @@ export const agentSubFactors: Record<string, SubFactor[]> = {
       impact: 14.0
     }
   ],
-  elasticity: [
+  'elasticity-graph': [
     {
       id: 'room_type_segment',
       name: 'Room-Type Segment',
-      description: 'Price sensitivity by room category and guest type',
+      description: 'Lets own-price elasticity βₚ differ for "standard", "deluxe", "suite", etc.',
       enabled: true,
-      impact: 42.3
+      impact: 38.4
     },
     {
       id: 'lead_time_bucket',
       name: 'Lead-Time Bucket',
-      description: 'Elasticity varies by booking window (0-1, 2-7, 8-30 days)',
+      description: 'Captures urgency sensitivity (0–1 d, 2–7 d, 8–30 d, 30 + d)',
       enabled: true,
-      impact: 31.5
+      impact: 32.1
     },
     {
-      id: 'customer_class',
-      name: 'Customer Class',
-      description: 'Corporate, OTA, and leisure guest price sensitivity',
+      id: 'customer_segment',
+      name: 'Customer Segment',
+      description: 'Distinguishes corporate, OTA, leisure, loyalty-member behaviour',
       enabled: true,
-      impact: 26.2
+      impact: 29.7
     },
     {
-      id: 'promotional_flag',
-      name: 'Promotional Flag',
-      description: 'Impact of promotional rates on demand elasticity',
+      id: 'our_promo_flag',
+      name: 'Our Promo Flag',
+      description: 'Indicates if today\'s rate has a promo/discount—allows asymmetric response',
+      enabled: true,
+      impact: 24.3
+    },
+    {
+      id: 'median_competitor_price',
+      name: 'Median Competitor Price',
+      description: 'Node feature giving current market ADR benchmark',
+      enabled: true,
+      impact: 35.8
+    },
+    {
+      id: 'competitor_occupancy_proxy',
+      name: 'Competitor Occupancy Proxy',
+      description: 'Binary "rate-closed / rooms-left<k" flag → pressure indicator',
+      enabled: true,
+      impact: 28.5
+    },
+    {
+      id: 'competitor_promo_frequency',
+      name: 'Competitor Promo Frequency',
+      description: 'Rolling 7-day share of days each rival ran a promo—measures aggressiveness',
+      enabled: true,
+      impact: 22.9
+    },
+    {
+      id: 'competitor_inventory_parity',
+      name: 'Competitor Inventory Parity',
+      description: 'Ratio of competitor rooms left vs. ours—edge attribute in the graph',
       enabled: false,
-      impact: 18.4
+      impact: 19.6
+    },
+    {
+      id: 'graph_topology_radius',
+      name: 'Graph Topology Radius',
+      description: 'Whether to include rivals within 1 km, 3 km, 5 km (controls adjacency A)',
+      enabled: true,
+      impact: 16.8
+    },
+    {
+      id: 'cross_channel_price_gap',
+      name: 'Cross-Channel Price Gap',
+      description: 'Difference between our direct web price and OTA price (parity violations)',
+      enabled: false,
+      impact: 12.4
     }
   ],
   ltb: [
@@ -180,36 +222,6 @@ export const agentSubFactors: Record<string, SubFactor[]> = {
       description: 'Heat index for resort and leisure demand',
       enabled: false,
       impact: 16.3
-    }
-  ],
-  competitor: [
-    {
-      id: 'median_competitor_price',
-      name: 'Median Competitor Price',
-      description: 'Market positioning relative to competitor rates',
-      enabled: true,
-      impact: 42.1
-    },
-    {
-      id: 'competitor_occupancy_proxy',
-      name: 'Competitor Occupancy Proxy',
-      description: 'Rate-closed flags indicating competitor demand',
-      enabled: true,
-      impact: 31.7
-    },
-    {
-      id: 'promo_frequency',
-      name: 'Promo Frequency',
-      description: 'Competitor promotional activity frequency',
-      enabled: true,
-      impact: 26.2
-    },
-    {
-      id: 'inventory_parity',
-      name: 'Inventory Parity',
-      description: 'Available rooms comparison across competitors',
-      enabled: false,
-      impact: 18.5
     }
   ],
   macro: [
