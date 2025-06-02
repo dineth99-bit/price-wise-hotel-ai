@@ -14,6 +14,8 @@ export const generateForecastData = (): ForecastData[] => {
     const trendForecasts = generateAgentForecasts('trend');
     const eventForecasts = generateAgentForecasts('event');
     const weatherForecasts = generateAgentForecasts('weather');
+    const competitorForecasts = generateAgentForecasts('competitor');
+    const macroForecasts = generateAgentForecasts('macro');
     const costForecasts = generateAgentForecasts('cost');
     
     return {
@@ -24,6 +26,8 @@ export const generateForecastData = (): ForecastData[] => {
       trend_price: trendForecasts[condition.index].value,
       weather_impact: weatherForecasts[condition.index].value,
       event_boost: eventForecasts[condition.index].value,
+      competitor_impact: competitorForecasts[condition.index].value,
+      macro_impact: macroForecasts[condition.index].value,
       cost_estimate: costForecasts[condition.index].value
     };
   });
