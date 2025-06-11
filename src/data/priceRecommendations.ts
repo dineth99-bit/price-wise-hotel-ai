@@ -10,7 +10,6 @@ export const generateForecastData = (): ForecastData[] => {
     const demandForecasts = generateAgentForecasts('demand');
     const elasticityGraphForecasts = generateAgentForecasts('elasticity-graph');
     const ltbForecasts = generateAgentForecasts('ltb');
-    const trendForecasts = generateAgentForecasts('trend');
     const eventForecasts = generateAgentForecasts('event');
     const weatherForecasts = generateAgentForecasts('weather');
     const macroForecasts = generateAgentForecasts('macro');
@@ -21,10 +20,10 @@ export const generateForecastData = (): ForecastData[] => {
       predicted_demand: Math.round(demandForecasts[condition.index].value),
       price_elasticity: elasticityGraphForecasts[condition.index].value,
       look_to_book_ratio: ltbForecasts[condition.index].value,
-      trend_price: trendForecasts[condition.index].value,
+      trend_price: 100 + Math.sin(condition.index / 10) * 20, // Simple trend calculation
       weather_impact: weatherForecasts[condition.index].value,
       event_boost: eventForecasts[condition.index].value,
-      competitor_impact: elasticityGraphForecasts[condition.index].value * 0.3, // Derived from elasticity-graph
+      competitor_impact: elasticityGraphForecasts[condition.index].value * 0.3,
       macro_impact: macroForecasts[condition.index].value,
       cost_estimate: costForecasts[condition.index].value
     };
@@ -65,7 +64,7 @@ export const generatePriceRecommendations = (): PriceRecommendation[] => {
         const ltbAdjustment = 1 + (forecast.look_to_book_ratio - 0.12) * 2;
         recommendedPrice *= ltbAdjustment;
         
-        // Apply trend factor
+        // Apply trend factor (using the simple trend calculation)
         recommendedPrice *= (forecast.trend_price / 100);
         
         // Apply event boost

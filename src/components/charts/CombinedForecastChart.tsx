@@ -59,12 +59,12 @@ const CombinedForecastChart: React.FC<CombinedForecastChartProps> = ({
             case 'ltb':
               normalizedValue = Math.min(100, Math.max(0, forecast.value * 500)); // Convert 0-0.2 to 0-100
               break;
-            case 'trend':
-              normalizedValue = Math.min(100, Math.max(0, (forecast.value - 50) * 2 + 50)); // Center around 50
-              break;
             case 'event':
             case 'weather':
               normalizedValue = Math.min(100, Math.max(0, forecast.value + 50)); // Shift to positive range
+              break;
+            case 'macro':
+              normalizedValue = Math.min(100, Math.max(0, forecast.value * 10 + 50)); // Convert -5 to +5 range to 0-100
               break;
             case 'cost':
               normalizedValue = Math.min(100, Math.max(0, 100 - forecast.value)); // Invert cost (lower cost = better)

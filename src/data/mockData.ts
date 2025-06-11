@@ -28,14 +28,6 @@ export const agents: Agent[] = [
     subFactors: agentSubFactors.ltb
   },
   {
-    id: 'trend',
-    name: 'Price-Trend Agent',
-    description: 'Forecast the market average ADR we benchmark against',
-    color: '#ef4444', // red
-    enabled: true,
-    subFactors: agentSubFactors.trend
-  },
-  {
     id: 'event',
     name: 'Event-Impact Agent',
     description: 'Add deterministic lifts/dips from local happenings',

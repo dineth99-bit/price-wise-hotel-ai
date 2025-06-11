@@ -1,4 +1,3 @@
-
 import { SubFactor } from '@/types';
 
 export const agentSubFactors: Record<string, SubFactor[]> = {
@@ -132,36 +131,6 @@ export const agentSubFactors: Record<string, SubFactor[]> = {
       description: 'Failed card rate impact on conversion probability',
       enabled: true,
       impact: 13.4
-    }
-  ],
-  trend: [
-    {
-      id: 'market_adr_index',
-      name: 'Market ADR Index',
-      description: 'STR reports and OTA scraping for market benchmarks',
-      enabled: true,
-      impact: 45.1
-    },
-    {
-      id: 'hotel_supply_growth',
-      name: 'Hotel Supply Growth',
-      description: 'New rooms pipeline affecting market pricing',
-      enabled: true,
-      impact: 32.6
-    },
-    {
-      id: 'tourism_arrivals',
-      name: 'Tourism Arrivals YoY',
-      description: 'Year-over-year tourism growth trends',
-      enabled: true,
-      impact: 22.3
-    },
-    {
-      id: 'currency_fx_rate',
-      name: 'Currency FX Rate',
-      description: 'Foreign exchange impact for international guests',
-      enabled: false,
-      impact: 15.8
     }
   ],
   event: [

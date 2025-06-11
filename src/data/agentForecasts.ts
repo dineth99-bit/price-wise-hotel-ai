@@ -1,4 +1,3 @@
-
 import { AgentForecast } from '../types';
 import { marketConditions, MarketCondition } from './marketConditions';
 
@@ -43,15 +42,6 @@ export const generateAgentForecasts = (agentId: string): AgentForecast[] => {
         if (condition.hasEvent) value *= 1.4; // Higher conversion during events
         value = Math.max(0.05, Math.min(0.25, value + (Math.random() - 0.5) * 0.03));
         confidenceRange = 0.02;
-        break;
-        
-      case 'trend':
-        // Price trend: $80-$150
-        value = 100 * condition.seasonalFactor * condition.trendFactor;
-        if (condition.isWeekend) value *= 1.2;
-        if (condition.hasEvent) value *= 1.25;
-        value = Math.max(80, Math.min(150, value + (Math.random() - 0.5) * 10));
-        confidenceRange = 12;
         break;
         
       case 'event':
