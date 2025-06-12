@@ -1,3 +1,4 @@
+
 import { PriceRecommendation, ForecastData } from '../types';
 import { roomTypes, customerSegments } from './roomData';
 import { marketConditions } from './marketConditions';
@@ -13,7 +14,6 @@ export const generateForecastData = (): ForecastData[] => {
     const eventForecasts = generateAgentForecasts('event');
     const weatherForecasts = generateAgentForecasts('weather');
     const macroForecasts = generateAgentForecasts('macro');
-    const costForecasts = generateAgentForecasts('cost');
     
     return {
       timestamp: condition.date,
@@ -25,7 +25,7 @@ export const generateForecastData = (): ForecastData[] => {
       event_boost: eventForecasts[condition.index].value,
       competitor_impact: elasticityGraphForecasts[condition.index].value * 0.3,
       macro_impact: macroForecasts[condition.index].value,
-      cost_estimate: costForecasts[condition.index].value
+      cost_estimate: 40 // Static cost estimate since cost agent is removed
     };
   });
 };

@@ -1,3 +1,4 @@
+
 import { SubFactor } from '@/types';
 
 export const agentSubFactors: Record<string, SubFactor[]> = {
@@ -221,36 +222,6 @@ export const agentSubFactors: Record<string, SubFactor[]> = {
       description: 'Consumer confidence and spending willingness',
       enabled: true,
       impact: 16.7
-    }
-  ],
-  cost: [
-    {
-      id: 'operating_costs_per_room',
-      name: 'Operating Costs per Occupied Room',
-      description: 'Variable costs per occupied room night',
-      enabled: true,
-      impact: 39.4
-    },
-    {
-      id: 'energy_cost_index',
-      name: 'Energy Cost Index',
-      description: 'Electricity, heating, and cooling cost trends',
-      enabled: true,
-      impact: 28.1
-    },
-    {
-      id: 'labour_hourly_rate',
-      name: 'Labour Hourly Rate',
-      description: 'Staffing and service-related cost escalation',
-      enabled: true,
-      impact: 21.7
-    },
-    {
-      id: 'maintenance_capex',
-      name: 'Maintenance Cap-Ex Plan',
-      description: 'Planned capital expenditure for property upkeep',
-      enabled: false,
-      impact: 10.8
     }
   ]
 };

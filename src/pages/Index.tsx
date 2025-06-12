@@ -245,7 +245,6 @@ const Index: React.FC = () => {
                             {agent.id === 'event' && `+$${todayForecasts?.event_boost.toFixed(1)}`}
                             {agent.id === 'weather' && `${todayForecasts?.weather_impact.toFixed(2)}%`}
                             {agent.id === 'macro' && `${todayForecasts?.macro_impact.toFixed(2)}%`}
-                            {agent.id === 'cost' && `$${todayForecasts?.cost_estimate.toFixed(1)}`}
                           </span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-1.5">

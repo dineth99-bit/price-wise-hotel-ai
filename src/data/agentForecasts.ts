@@ -1,3 +1,4 @@
+
 import { AgentForecast } from '../types';
 import { marketConditions, MarketCondition } from './marketConditions';
 
@@ -66,14 +67,6 @@ export const generateAgentForecasts = (agentId: string): AgentForecast[] => {
         value += Math.sin(condition.index / 20) * 2; // Economic cycles
         value = Math.max(-8, Math.min(8, value + (Math.random() - 0.5) * 2));
         confidenceRange = 3;
-        break;
-        
-      case 'cost':
-        // Operational cost: $30-$60 per room
-        value = 40 * condition.trendFactor; // Costs trend upward
-        if (condition.isWeekend) value *= 1.1; // Higher weekend costs
-        value = Math.max(30, Math.min(60, value + (Math.random() - 0.5) * 4));
-        confidenceRange = 6;
         break;
         
       default:

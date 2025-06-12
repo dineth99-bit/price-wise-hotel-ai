@@ -66,9 +66,6 @@ const CombinedForecastChart: React.FC<CombinedForecastChartProps> = ({
             case 'macro':
               normalizedValue = Math.min(100, Math.max(0, forecast.value * 10 + 50)); // Convert -5 to +5 range to 0-100
               break;
-            case 'cost':
-              normalizedValue = Math.min(100, Math.max(0, 100 - forecast.value)); // Invert cost (lower cost = better)
-              break;
           }
           
           weightedSum += normalizedValue * weight;

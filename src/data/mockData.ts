@@ -50,14 +50,6 @@ export const agents: Agent[] = [
     color: '#84cc16', // lime
     enabled: true,
     subFactors: agentSubFactors.macro
-  },
-  {
-    id: 'cost',
-    name: 'Cost-Structure Agent',
-    description: 'Forecast cost components for profit optimisation',
-    color: '#64748b', // slate
-    enabled: true,
-    subFactors: agentSubFactors.cost
   }
 ];
 
